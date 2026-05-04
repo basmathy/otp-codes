@@ -23,11 +23,11 @@ public class AdminService {
     }
 
     public OtpConfig changeOtpSettings(int codeLength, int lifetimeSeconds) {
-        if (codeLength < 4 || codeLength > 12) {
-            throw new BadRequestException("Code length must be between 4 and 12");
+        if (codeLength < 6 || codeLength > 10) {
+            throw new BadRequestException("Code length must be between 6 and 10");
         }
-        if (lifetimeSeconds < 30 || lifetimeSeconds > 86400) {
-            throw new BadRequestException("Lifetime must be between 30 and 86400 seconds");
+        if (lifetimeSeconds < 30 || lifetimeSeconds > 3600) {
+            throw new BadRequestException("Lifetime must be between 30 and 3600 seconds");
         }
         otpConfigDao.updateConfig(codeLength, lifetimeSeconds);
         logger.info("OTP settings changed");

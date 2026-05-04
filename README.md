@@ -88,35 +88,24 @@ java -jar target/otp-codes-1.0.0.jar
 
 ## API
 
+Примеры ниже рекомендуется проверять через `PowerShell`.
+
 ### Регистрация
 
-```http
-POST /api/auth/register
-Content-Type: application/json
-```
-
-```json
-{
-  "login": "admin",
-  "password": "qwerty123",
-  "role": "ADMIN"
-}
+```powershell
+curl.exe -X POST http://localhost:8080/api/auth/register `
+  -H "Content-Type: application/json" `
+  -d '{\"login\":\"admin\",\"password\":\"qwerty123\",\"role\":\"ADMIN\"}'
 ```
 
 Роли: `ADMIN`, `USER`. Если администратор уже существует, второй администратор не регистрируется.
 
 ### Логин
 
-```http
-POST /api/auth/login
-Content-Type: application/json
-```
-
-```json
-{
-  "login": "admin",
-  "password": "qwerty123"
-}
+```powershell
+curl.exe -X POST http://localhost:8080/api/auth/login `
+  -H "Content-Type: application/json" `
+  -d '{\"login\":\"admin\",\"password\":\"qwerty123\"}'
 ```
 
 Ответ содержит JWT:
@@ -128,63 +117,46 @@ Content-Type: application/json
 }
 ```
 
-Для защищенных запросов передавайте заголовок:
-
-```http
-Authorization: Bearer <token>
-```
+Для защищенных запросов передавайте заголовок `-H "Authorization: Bearer <token>"`.
 
 ### Изменить настройки OTP
 
 Только `ADMIN`.
 
-```http
-PUT /api/admin/otp-config
-Authorization: Bearer <admin-token>
-Content-Type: application/json
-```
-
-```json
-{
-  "codeLength": 6,
-  "lifetimeSeconds": 300
-}
+```powershell
+curl.exe -X PUT http://localhost:8080/api/admin/otp-config `
+  -H "Authorization: Bearer <admin-token>" `
+  -H "Content-Type: application/json" `
+  -d '{\"codeLength\":6,\"lifetimeSeconds\":300}'
 ```
 
 ### Получить пользователей
 
 Только `ADMIN`. Возвращает всех пользователей, кроме администраторов.
 
-```http
-GET /api/admin/users
-Authorization: Bearer <admin-token>
+```powershell
+curl.exe -X GET http://localhost:8080/api/admin/users `
+  -H "Authorization: Bearer <admin-token>"
 ```
 
 ### Удалить пользователя
 
 Только `ADMIN`. OTP-коды пользователя удаляются каскадно через внешний ключ.
 
-```http
-DELETE /api/admin/users/2
-Authorization: Bearer <admin-token>
+```powershell
+curl.exe -X DELETE http://localhost:8080/api/admin/users/2 `
+  -H "Authorization: Bearer <admin-token>"
 ```
 
 ### Сгенерировать OTP
 
 Только `USER`.
 
-```http
-POST /api/otp/generate
-Authorization: Bearer <user-token>
-Content-Type: application/json
-```
-
-```json
-{
-  "operationId": "payment-100",
-  "channel": "FILE",
-  "destination": "payment-100"
-}
+```powershell
+curl.exe -X POST http://localhost:8080/api/otp/generate `
+  -H "Authorization: Bearer <user-token>" `
+  -H "Content-Type: application/json" `
+  -d '{\"operationId\":\"payment-100\",\"channel\":\"FILE\",\"destination\":\"payment-100\"}'
 ```
 
 Доступные каналы:
@@ -198,47 +170,14 @@ Content-Type: application/json
 
 Только `USER`.
 
-```http
-POST /api/otp/validate
-Authorization: Bearer <user-token>
-Content-Type: application/json
-```
-
-```json
-{
-  "operationId": "payment-100",
-  "code": "qwerty123"
-}
+```powershell
+curl.exe -X POST http://localhost:8080/api/otp/validate `
+  -H "Authorization: Bearer <user-token>" `
+  -H "Content-Type: application/json" `
+  -d '{\"operationId\":\"payment-100\",\"code\":\"633970\"}'
 ```
 
 Если код корректен, его статус меняется на `USED`. Просроченные активные коды периодически переводятся в `EXPIRED`.
-
-## Быстрая проверка через curl
-
-```bash
-curl -X POST http://localhost:8080/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{"login":"admin","password":"qwerty123","role":"ADMIN"}'
-
-curl -X POST http://localhost:8080/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{"login":"user","password":"qwerty123","role":"USER"}'
-
-curl -X POST http://localhost:8080/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"login":"user","password":"qwerty123"}'
-```
-
-Скопируйте токен пользователя и выполните генерацию:
-
-```bash
-curl -X POST http://localhost:8080/api/otp/generate \
-  -H "Authorization: Bearer <user-token>" \
-  -H "Content-Type: application/json" \
-  -d '{"operationId":"payment-100","channel":"FILE","destination":"payment-100"}'
-```
-
-Код появится в `otp-codes.txt`.
 
 ## Логирование
 
