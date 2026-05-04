@@ -1,6 +1,6 @@
 # OTP codes
 
-Учебный backend-сервис для генерации, доставки и проверки одноразовых OTP-кодов.
+Backend-сервис для генерации, доставки и проверки одноразовых OTP-кодов.
 
 HTTP API работает на `com.sun.net.httpserver.HttpServer`, доступ к PostgreSQL выполнен через JDBC и `PreparedStatement`, бизнес-логика вынесена в сервисы, работа с БД - в DAO.
 
@@ -32,13 +32,13 @@ HTTP API работает на `com.sun.net.httpserver.HttpServer`, доступ
 
 ## База данных
 
-Создайте базу PostgreSQL:
+Создайте базу PostgreSQL любым удобным образом, например, с помощью docker-контейнера:
 
-```sql
-create database otp_codes;
+```bash
+docker run --name postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=otp_codes -p 5432:5432 -d postgres:17
 ```
 
-Настройки подключения находятся в `src/main/resources/application.properties`:
+Настройки подключения можно посмотреть в `src/main/resources/application.properties`:
 
 ```properties
 db.url=jdbc:postgresql://localhost:5432/otp_codes
@@ -98,7 +98,7 @@ Content-Type: application/json
 ```json
 {
   "login": "admin",
-  "password": "123456",
+  "password": "qwerty123",
   "role": "ADMIN"
 }
 ```
@@ -115,7 +115,7 @@ Content-Type: application/json
 ```json
 {
   "login": "admin",
-  "password": "123456"
+  "password": "qwerty123"
 }
 ```
 
@@ -207,7 +207,7 @@ Content-Type: application/json
 ```json
 {
   "operationId": "payment-100",
-  "code": "123456"
+  "code": "qwerty123"
 }
 ```
 
@@ -218,15 +218,15 @@ Content-Type: application/json
 ```bash
 curl -X POST http://localhost:8080/api/auth/register \
   -H "Content-Type: application/json" \
-  -d '{"login":"admin","password":"123456","role":"ADMIN"}'
+  -d '{"login":"admin","password":"qwerty123","role":"ADMIN"}'
 
 curl -X POST http://localhost:8080/api/auth/register \
   -H "Content-Type: application/json" \
-  -d '{"login":"user","password":"123456","role":"USER"}'
+  -d '{"login":"user","password":"qwerty123","role":"USER"}'
 
 curl -X POST http://localhost:8080/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"login":"user","password":"123456"}'
+  -d '{"login":"user","password":"qwerty123"}'
 ```
 
 Скопируйте токен пользователя и выполните генерацию:
